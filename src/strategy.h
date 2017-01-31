@@ -4,7 +4,10 @@
 //
 // Project:	tttt, a simple 4x4x4 Tic-Tac-Toe Program
 //
-// Purpose:	
+// Purpose:	To define the interface to the computers strategy.  The 
+//		computers strategy itself is a list of rules, and so the
+//	strategy interface sets up those rules, and then handles requests for
+//	moves.
 //
 // Creator:	Dan Gisselquist, Ph.D.
 //		Gisselquist Technology, LLC
@@ -44,20 +47,44 @@
 
 #define	MAX_RULES	32
 
+// Here's the definition of a "rule".  It's a function that sets the values
+// of a given VSET, in this case, the VSET named spots.
 typedef	void	(*RULEFN)(LPGBOARD brd, LPCOMBOSET, GB_PIECE, LPVSET spots);
+
+// We keep track of rules by more than just the function pointer.  We allow
+// every rule to have a name and a difficulty level.  The rule will apply
+// to any difficulty level at or above the level of the rule.
 typedef	struct RULE_S {
 	const char	*m_name;
 	int	m_level;
 	RULEFN	m_fn;
 } RULE, *LPRULE;
 
+// Finally, we define our strategy.  The strategy is nothing more than a list
+// of rules for a given difficulty level.
 typedef	struct STRATEGY_S {
-	int	m_difficulty_level, m_num_rules;
+	// The difficulty level determines which rules were applied
+	int	m_difficulty_level,
+		// Keep track of how many rules are valid ones
+		m_num_rules;
+	// And here's where we point to all of our rules
 	const RULE *m_rules[MAX_RULES];
 } STRATEGY, *LPSTRATEGY;
 
-// extern const char *difficulty_name(int difficulty_level);
+/*
+ * set_difficulty
+ *
+ * Pick from among the rule set those rules appropriate for the given difficulty
+ * level selected.
+ */
 extern	void	set_difficulty(LPSTRATEGY s, int difficulty);
+
+/*
+ * makemove
+ *
+ * Use our ruleset, as applied to the board and the set of 4-in a row
+ * combinations to choose a move.
+ */
 extern	int	makemove(LPSTRATEGY, LPGBOARD, LPCOMBOSET, GB_PIECE);
 
 #endif

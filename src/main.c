@@ -4,7 +4,11 @@
 //
 // Project:	tttt, a simple 4x4x4 Tic-Tac-Toe Program
 //
-// Purpose:	
+// Purpose:	To play a game of 4x4x4 Tic-Tac-Toe.  This includes
+//		allocating and initializing all game variables, reading and
+//	processing user input, adjudicating whether or not someone has won,
+//	and eventually automatically restarting the game upon a win (or loss)
+//	when on an embedded (ZipCPU) device.
 //
 // Creator:	Dan Gisselquist, Ph.D.
 //		Gisselquist Technology, LLC
@@ -63,16 +67,25 @@ void	print_instructions(void) {
 "the right\n\n");
 }
 
+/*
+ * getmove
+ *
+ * Invoke fgets to get a line of input data from the user.  We'll take the
+ * first three digits the user gives us and try to map them into a position.
+ * We'll return -1 on an invalid move, or -2 on any other reason (such as one
+ * where we need to shut down (EOF)).
+ */
 int	getmove(void) {
 	char	line[40], *ptr = line;
 	int	x=0, y=0, z=0;
 
+	// Request the user give us a move
 	printf("Your move : "); fflush(stdout);
 
 	if (NULL == fgets(line, sizeof(line), stdin)) {
-printf("EOF!\n");
+		printf("EOF!\n");
 		return -2;
-}
+	}
 
 	while(isspace(*ptr))
 		ptr++;
@@ -85,19 +98,33 @@ printf("EOF!\n");
 
 	while(!isdigit(*ptr))
 		ptr++;
+	if (!*ptr) return -1;	// If no digits are given, its an invalid move
 	x = *ptr++ - '0' - 1;
 	
 	while(!isdigit(*ptr))
 		ptr++;
+	if (!*ptr)	// If only one digit is given, its also invalid
+		return -1;
 	y = *ptr++ - '0' - 1;
 	
 	while(!isdigit(*ptr))
 		ptr++;
+	if (!*ptr)	// If only two digits are given, its also invalid
+		return -1;
 	z = *ptr++ - '0' - 1;
 
 	return coordtoint(x, y, z);
 }
 
+/*
+ * play_game()
+ *
+ * Play the game once.  This includes allocating and initializing the board,
+ * knowledge/reasoning base (COMBOSET), and the STRATEGY that will be used by
+ * the computer.  It also includes requesting the user input, and causing the
+ * game board to be printed after ever move of the computers.
+ *
+ */
 void	play_game(void) {
 	GBOARD		brd;
 	COMBOSET	cs;
@@ -132,7 +159,7 @@ void	play_game(void) {
 			brd.m_winner = GB_BLACK;
 	}
 
-
+	// Print the final (winning) copy of the board
 	gb_print(&brd);
 
 	if (gb_winner(&brd) == GB_WHITE)
@@ -143,8 +170,23 @@ void	play_game(void) {
 		printf("The game is over ... somehow.\n");
 }
 
+/*
+ * main
+ *
+ * The classic entry point for any C program.
+ */
 int	main(int argc, char **argv) {
+	// Randomize the random number generator, so that we can truly pick
+	// our computer moves from a random set of equally valid moves.
 	srand(time(NULL));
+
+	// Start by printing the instructions, before actually playing the game.
 	print_instructions();
+
+	// Now ... let's have fun and PLAY!
+	//
+	// On an embedded machine, this should be in a loop until the kingdom
+	// comes (or power gets pulled, or the debugger takes control, etc.).
+	// For now, we'll just play it once. 
 	play_game();
 }

@@ -4,7 +4,9 @@
 //
 // Project:	tttt, a simple 4x4x4 Tic-Tac-Toe Program
 //
-// Purpose:	
+// Purpose:	A COMBOROW is a set of 4-points that when all filled by one
+//		player will result in a win.  A COMBOSET is the set of all such
+//	COMBOROWs associated with the game.  
 //
 // Creator:	Dan Gisselquist, Ph.D.
 //		Gisselquist Technology, LLC
@@ -42,14 +44,34 @@
 #include "gboard.h"
 #include "comborow.h"
 
+// The number of possible ways to win in 4x4x4 tic-tac-toe
 #define	NUM_COMBOROWS	(16*3+4*7)
+
 typedef	struct	COMBOSET_S {
-	int	m_ninplay, // Number of ways to win that are still in play
+		// A combination row is in play as long as no more than one
+		// player has moved within it.
+	int	m_ninplay,
+		// If one of our combinations has resulted in a win, let's
+		// record the index of that combination.
 		m_winningid;
+
+	// These are the set of the possible winning combinations
 	COMBOROW	m_data[NUM_COMBOROWS];
 } COMBOSET, *LPCOMBOSET;
 
-void	cs_init(LPCOMBOSET cs);
-bool	cs_place(LPCOMBOSET cs, GB_PIECE who, int where);
+/*
+ * cs_init
+ *
+ * Fill a structure with appropriate initial values.
+ */
+extern void	cs_init(LPCOMBOSET cs);
+
+/*
+ * cs_place
+ *
+ * "who" has placed his piece "where".  Adjust our data structure as
+ * appropriate to reflect that fact.
+ */
+extern bool	cs_place(LPCOMBOSET cs, GB_PIECE who, int where);
 
 #endif

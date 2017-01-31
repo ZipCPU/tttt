@@ -4,7 +4,15 @@
 //
 // Project:	tttt, a simple 4x4x4 Tic-Tac-Toe Program
 //
-// Purpose:	
+// Purpose:	A COMBOROW is a data type designed to hold the four values 
+//		necessary to describe a four-in-a-row or equivalently a set of
+//	points necessary to win.  This file describes how this data type
+//	interacts.  
+//
+//	Perhaps the most important function on a combo row is cr_register().
+//	This function registers that someone has moved, possibly into the row,
+//	and adjusts the row accordingly.
+//
 //
 // Creator:	Dan Gisselquist, Ph.D.
 //		Gisselquist Technology, LLC
@@ -39,14 +47,27 @@
 #include <string.h>
 #include "comborow.h"
 
+/*
+ * cr_refresh
+ *
+ * This is very much like an init, only that it is modified so that an existing
+ * combo can be reset for a new game.
+ */
 void	cr_refresh(LPCOMBOROW cr) {
 	int	i, j;
 
+	// When refreshing a combo, we re-assert that it has no owner (yet)
 	cr->m_owner = GB_NOONE;
+	// That none of the spaces reflected by these are full
 	cr->m_nfilled = 0;
+	// And that it is still interesting--that is, these four locations may
+	// eventually yield a win .. for someone
 	cr->m_interesting = true;
 
-	// Resort the spots
+	// Resort the spots, smaller number first.
+	// While this isn't the fastest sort, we're only looking at a cost
+	// of about six compares--in spite of what this looks like, so it's
+	// not that bad.
 	for(i=0; i<NUM_ON_SIDE-1; i++) {
 		for(j=i+1; j<NUM_ON_SIDE; j++) {
 			if (cr->m_spots[i] > cr->m_spots[j]) {
@@ -58,6 +79,11 @@ void	cr_refresh(LPCOMBOROW cr) {
 	}
 }
 
+/*
+ * cr_init
+ *
+ * Initialize a combo-row to have the four positions given.
+ */
 void	cr_init(LPCOMBOROW cr, int one, int two, int three, int four) {
 	cr->m_spots[0] = one;
 	cr->m_spots[1] = two;

@@ -4,7 +4,10 @@
 //
 // Project:	tttt, a simple 4x4x4 Tic-Tac-Toe Program
 //
-// Purpose:	
+// Purpose:	This is a piece of test infrastructure, designed to prove that
+//		the 4-in-a-row combinations within the combo set are in fact
+//	valid combinations.  To do that, we print them all out for visual
+//	inspection.
 //
 // Creator:	Dan Gisselquist, Ph.D.
 //		Gisselquist Technology, LLC
@@ -48,12 +51,18 @@ int main(int argc, char **argv) {
 	cs_init(&cs);
 
 	for(i=0; i< NUM_COMBOROWS; i++) {
+		// Create/initialize an empty game board
 		gb_reset(&brd);
 
+		// Place pieces on that board
+		//
+		// Specifically, we place a piece into all the squares
+		// associated with a particular four-in-a-row possibility.
 		cr = &cs.m_data[i];
 		for(j=0; j < NUM_ON_SIDE; j++)
 			brd.m_spots[cr->m_spots[j]] = GB_BLACK;
 
+		// And print it out.
 		gb_print(&brd);
 	}
 
