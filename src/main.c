@@ -50,7 +50,7 @@
 
 void	print_instructions(void) {
 	printf(
-"Welcome to 4x4x4 Tic-Tac-Toe\n"
+"\n\n\n\nWelcome to 4x4x4 Tic-Tac-Toe\n"
 "\n"
 "The goal of this game is to get 4 pieces in a row.  The board is three\n"
 "dimensional, even though it will be displayed on a terminal screen.  Imagine\n"
@@ -96,18 +96,18 @@ int	getmove(void) {
 		return -1;
 	}
 
-	while(!isdigit(*ptr))
+	while((*ptr)&&(!isdigit(*ptr)))
 		ptr++;
 	if (!*ptr) return -1;	// If no digits are given, its an invalid move
 	x = *ptr++ - '0' - 1;
 	
-	while(!isdigit(*ptr))
+	while((*ptr)&&(!isdigit(*ptr)))
 		ptr++;
 	if (!*ptr)	// If only one digit is given, its also invalid
 		return -1;
 	y = *ptr++ - '0' - 1;
 	
-	while(!isdigit(*ptr))
+	while((*ptr)&&(!isdigit(*ptr)))
 		ptr++;
 	if (!*ptr)	// If only two digits are given, its also invalid
 		return -1;
@@ -176,9 +176,11 @@ void	play_game(void) {
  * The classic entry point for any C program.
  */
 int	main(int argc, char **argv) {
+	time_t now;
 	// Randomize the random number generator, so that we can truly pick
 	// our computer moves from a random set of equally valid moves.
-	srand(time(NULL));
+	now = time(NULL);
+	srand(now);
 
 	// Start by printing the instructions, before actually playing the game.
 	print_instructions();
@@ -188,5 +190,8 @@ int	main(int argc, char **argv) {
 	// On an embedded machine, this should be in a loop until the kingdom
 	// comes (or power gets pulled, or the debugger takes control, etc.).
 	// For now, we'll just play it once. 
+#ifdef	__ZIPCPU__
+	while(1)
+#endif
 	play_game();
 }
