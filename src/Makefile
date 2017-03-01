@@ -73,7 +73,6 @@ CC      := $(CROSS)gcc
 OBJDIR  := obj-$(ARCH)
 SOURCES := comborow.c comboset.c gboard.c strategy.c vset.c main.c
 OBJECTS := $(addprefix $(OBJDIR)/,$(subst .c,.o,$(SOURCES)))
-CFLAGS  := -g -Og -Wall
 
 all: $(OBJDIR)/ $(CROSS)tttt
 
@@ -81,14 +80,16 @@ all: $(OBJDIR)/ $(CROSS)tttt
 # Set some eXtra make variables, such as might be used by your CPU of interest
 #
 ifeq ($(ARCH), zip)
-XLIBD    := `which $(CC) | sed -e 's,bin/$(CC),zip/lib,'`
-XLIBS    := -L$(XLIBD) -lg -lzipbasic $(XLIBD)/crt0.o -lzipbasic -lc
-LDSCRIPT := zipsim.ld
+XLIBD    := ../../branch8b/sw/zlib
+XLIBS    := -L$(XLIBD) -Wl,--start-group -Wl,--Map=zip-tttt.map -larty
+LDSCRIPT := $(XLIBD)/../board/arty.ld
 XFLAGS   := -T$(LDSCRIPT)
+CFLAGS  := -O3 -Wall
 else
 XLIBD   :=
 XLIBS  :=
 XFLAGS :=
+CFLAGS  := -g -Og -Wall
 endif
 
 
@@ -108,10 +109,20 @@ $(OBJDIR)/:
 $(OBJDIR)/%.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+# For compiler debugging purposes, allow us to look at the assembly generated
+# for any file
+%.s: $(OBJDIR)/%.s
+	@echo $< has been built
+	@cp $< $@
+$(OBJDIR)/%.s: %.c
+	$(CC) $(CFLAGS) -S -fdump-rtl-all $< -o $@
+
 # Build the final executable
 $(CROSS)tttt: $(OBJECTS)
 	$(CC) $(XFLAGS) $(OBJECTS) $(XLIBS) -o $@
 
+$(CROSS)tttt.txt: $(CROSS)tttt
+	$(CROSS)objdump -dr $(CROSS)tttt > $(CROSS)tttt.txt
 
 
 # Build dependency information
