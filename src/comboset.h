@@ -74,4 +74,11 @@ extern void	cs_init(LPCOMBOSET cs);
  */
 extern bool	cs_place(LPCOMBOSET cs, GB_PIECE who, int where);
 
+/*
+ * cs_debug
+ *
+ * Dump a comboset to the screen for debugging evaluation
+ */
+extern	void	cs_debug(LPCOMBOSET cs);
+
 #endif

@@ -169,3 +169,13 @@ cs_place(LPCOMBOSET cs, GB_PIECE who, int where)
 	// Return true if someone has won, false otherwise.
 	return (cs->m_winningid >= 0) ? true : false;
 }
+
+void
+cs_debug(LPCOMBOSET cs) {
+	printf("COMBOSET DUMP: %2d combos in play, winning ID = %d\n",
+		cs->m_ninplay, cs->m_winningid);
+	for(int i=0; i<cs->m_ninplay; i++) {
+		printf("ROW[%2d] ", i);
+		cr_debug(&cs->m_data[i]);
+	}
+}
