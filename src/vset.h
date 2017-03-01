@@ -62,4 +62,7 @@ extern	void	vs_sub(LPVSET,LPVSET);
 extern	void	vs_combine(LPVSET,LPVSET);
 extern	int	vs_numactive(LPVSET);
 
+// Dump something interesting to the screen
+extern	void	vs_debug(LPVSET);
+
 #endif

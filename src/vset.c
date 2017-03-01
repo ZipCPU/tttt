@@ -62,24 +62,6 @@ bool	vs_isempty(LPVSET vs) {
 	return (vs->m_active==0)?true:false;
 }
 
-void	vs_incscore(LPVSET vs, int spot) {
-	if ((spot < 0)||(spot >= NUM_SQUARES))
-		return;
-	if (vs->m_data[spot] == 0)
-		vs->m_active++;
-	vs->m_data[spot]++;
-}
-
-void	vs_decscore(LPVSET vs, int spot) {
-	if ((spot < 0)||(spot >= NUM_SQUARES))
-		return;
-	if (vs->m_data[spot] > 0) {
-		vs->m_data[spot]--;
-		if (vs->m_data[spot] == 0)
-			vs->m_active--;
-	}
-}
-
 bool	vs_isable(LPVSET vs, int spot) {
 	if ((spot < 0)||(spot >= NUM_SQUARES))
 		return false;
@@ -94,8 +76,14 @@ void	vs_addscore(LPVSET vs, int spot, int delta) {
 	vs->m_data[spot] += delta;
 }
 
+void	vs_incscore(LPVSET vs, int spot) {
+	vs_addscore(vs, spot, 1);
+}
+
+
 void	vs_subscore(LPVSET vs, int spot, int delta) {
-	if ((spot < 0)||(spot >= NUM_SQUARES))
+
+	if ((spot < 0)||(spot >= NUM_SQUARES)||(delta == 0))
 		return;
 	if (vs->m_data[spot] >= delta) {
 		vs->m_data[spot] -= delta;
@@ -103,6 +91,11 @@ void	vs_subscore(LPVSET vs, int spot, int delta) {
 			vs->m_active--;
 	}
 }
+
+void	vs_decscore(LPVSET vs, int spot) {
+	vs_subscore(vs, spot, 1);
+}
+
 
 void	vs_disable(LPVSET vs, int spot) {
 	if ((spot < 0)||(spot >= NUM_SQUARES))
@@ -156,23 +149,32 @@ void	vs_sub(LPVSET vs, LPVSET other) {
 }
 
 void	vs_combine(LPVSET vs, LPVSET other) {
+	VSET	test;
 	int	highscore, i;
+
+	if (other->m_active <= 0)
+		return;
+
+	if (other->m_active >= NUM_SQUARES)
+		return;
+
+	vs_clear(&test);
 
 	highscore = 0;
 	for(i=0; i<NUM_SQUARES; i++)
-		if ((vs->m_data[i] > highscore)&&(other->m_data[i] > 0))
+		if (vs->m_data[i] > highscore)
 			highscore = vs->m_data[i];
 	if (highscore == 0)
 		return;
-	vs->m_active = 0;
+
 	for(i=0; i<NUM_SQUARES; i++) {
-		if ((vs->m_data[i] == highscore)&&(other->m_data[i] > 0))
-			vs->m_data[i] = other->m_data[i];
-		else
-			vs->m_data[i] = 0;
+		if (vs->m_data[i] == highscore)
+			test.m_data[i] = other->m_data[i];
 	}
 
-	vs->m_active = vs_numactive(vs);
+	test.m_active = vs_numactive(&test);
+	if (test.m_active > 0)
+		vs_set(vs, &test);
 }
 
 int	vs_numactive(LPVSET vs) {
@@ -182,5 +184,31 @@ int	vs_numactive(LPVSET vs) {
 		if (vs->m_data[i] > 0)
 			cnt++;
 	return cnt;
+}
+
+void	vs_debug(LPVSET vs) {
+	int	x, y, z, loc;
+
+	printf("VSET: NUMBER ACTIVE = %d\n", vs->m_active);
+		
+	for(y=0; y<NUM_ON_SIDE; y++) {
+		for(z=0; z<NUM_ON_SIDE; z++) {
+			for(x=0; x<NUM_ON_SIDE; x++) {
+				int	data;
+				loc = coordtoint(x, y, z);
+				data = vs->m_data[loc];
+				
+				if (data <= 0)
+					printf("-");
+				else if (data <= 9)
+					printf("%d", data);
+				else
+					printf("*");
+			}
+
+			printf("  ");
+		}
+		printf("\n");
+	} printf("\n");
 }
 
