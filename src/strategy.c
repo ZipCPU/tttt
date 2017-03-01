@@ -155,9 +155,8 @@ sum(LPCOMBOSET cs, LPVSET spots, GB_PIECE who, int nfilled)
 	for(i=0; i< cs->m_ninplay; i++) {
 		if ((cs->m_data[i].m_nfilled == nfilled)
 				&&(cs->m_data[i].m_owner == who)) {
-			for(j=0; j< NUM_ON_SIDE-cs->m_data[i].m_nfilled; j++) {
-				spots->m_data[cs->m_data[i].m_spots[j]]++;
-			}
+			for(j=0; j< NUM_ON_SIDE-cs->m_data[i].m_nfilled; j++)
+				vs_incscore(spots, cs->m_data[i].m_spots[j]);
 		}
 	}
 }
