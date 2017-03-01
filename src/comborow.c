@@ -43,6 +43,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
 //
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "comborow.h"
@@ -204,5 +205,27 @@ bool	cr_isownedby(LPCOMBOROW cr, GB_PIECE who) {
 	if ((cr->m_interesting)&&(who == cr->m_owner))
 		return true;
 	return false;
+}
+
+/*
+ * cr_debug
+ *
+ * DUMP the relavent parts of the comborow structure to the screen.  Other
+ * constraints applied, and we are restricted to one line here.
+ */
+void	cr_debug(LPCOMBOROW cr) {
+	int	i, unfilled = NUM_ON_SIDE - cr->m_nfilled;
+
+	for(i=0; i< unfilled; i++)
+		printf(" %2d  ", cr->m_spots[i]);
+	for(i= unfilled; i<NUM_ON_SIDE; i++)
+		printf("(%2d) ", cr->m_spots[i]);
+	if (!cr->m_interesting)
+		printf("  Not interesting\r\n");
+	else if (cr->m_owner == GB_WHITE)
+		printf("  Owned by O\r\n");
+	else if (cr->m_owner == GB_BLACK)
+		printf("  Owned by X\r\n");
+	else	printf("\r\n");
 }
 

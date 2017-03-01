@@ -78,6 +78,8 @@ bool	cr_isects(LPCOMBOROW cr, LPCOMBOROW br);
 // Does "who" "own" this row?  That is, does he have pieces in the row, and
 // is it such that his opponent does not?
 bool	cr_isownedby(LPCOMBOROW cr, GB_PIECE who);
+// Dump the contents to stdout for the purpose of debugging them
+void	cr_debug(LPCOMBOROW cr);
 
 
 #endif
