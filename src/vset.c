@@ -190,14 +190,14 @@ void	vs_debug(LPVSET vs) {
 	int	x, y, z, loc;
 
 	printf("VSET: NUMBER ACTIVE = %d\n", vs->m_active);
-		
+
 	for(y=0; y<NUM_ON_SIDE; y++) {
 		for(z=0; z<NUM_ON_SIDE; z++) {
 			for(x=0; x<NUM_ON_SIDE; x++) {
 				int	data;
 				loc = coordtoint(x, y, z);
 				data = vs->m_data[loc];
-				
+
 				if (data <= 0)
 					printf("-");
 				else if (data <= 9)
