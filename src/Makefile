@@ -84,12 +84,12 @@ XLIBD    := ../../branch8b/sw/zlib
 XLIBS    := -L$(XLIBD) -Wl,--start-group -Wl,--Map=zip-tttt.map -larty
 LDSCRIPT := $(XLIBD)/../board/arty.ld
 XFLAGS   := -T$(LDSCRIPT)
-CFLAGS  := -O3 -Wall
+CFLAGS  := -O3 -Wall -std=c99
 else
 XLIBD   :=
 XLIBS  :=
 XFLAGS :=
-CFLAGS  := -g -Og -Wall
+CFLAGS  := -g -Og -Wall -std=c99
 endif
 
 
